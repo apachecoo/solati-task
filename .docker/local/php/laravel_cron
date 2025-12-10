@@ -1,0 +1,2 @@
+* * * * * /scripts/run_schedule.sh > /var/log/cron_schedule.log 2>&1
+* * * * * echo "Cron funcionando a las $(date)" > /var/log/test_cron.log 2>&1
