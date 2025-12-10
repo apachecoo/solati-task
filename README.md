@@ -1,66 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Proyecto Laravel 12 Contenerizado
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este proyecto corresponde a una aplicación **Laravel 12** configurada para ejecutarse en un entorno completamente contenerizado mediante **Docker**. La estructura principal del entorno se encuentra dentro del directorio `.docker/`.
 
-## About Laravel
+A continuación se explica cómo levantar el entorno local, ejecutar migraciones y acceder a la API.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📁 Estructura del entorno Docker
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+.docker/
+└── local
+    ├── db
+    │   ├── data
+    │   ├── my.cnf
+    │   └── sql
+    ├── docker-compose.yml
+    ├── logs
+    │   ├── mysql-error.log
+    │   ├── mysql-query.log
+    │   └── mysql-slow.log
+    ├── nginx
+    │   ├── default.conf
+    │   └── nginx.conf
+    ├── php
+    │   ├── docker.conf
+    │   ├── Dockerfile
+    │   ├── laravel_cron
+    │   ├── php.ini
+    │   ├── scripts
+    │   │   ├── init.sh
+    │   │   └── run_schedule.sh
+    │   └── supervisord.conf
+    ├── phpmyadmin
+    └── redis
+        └── data
+            ├── appendonlydir
+            │   ├── appendonly.aof.1.base.rdb
+            │   ├── appendonly.aof.1.incr.aof
+            │   └── appendonly.aof.manifest
+            └── dump.rdb
+```
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Levantar el entorno de desarrollo
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. Ubicarse dentro del directorio:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+cd .docker/local
+```
 
-## Laravel Sponsors
+2. Construir y levantar los contenedores:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+docker compose up -d --build
+```
 
-### Premium Partners
+Esto levantará los servicios configurados (PHP, Nginx, MySQL, Redis, etc.).
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## 🔧 Ejecutar migraciones de Laravel
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Una vez los contenedores estén arriba, ingresar al contenedor de PHP:
 
-## Code of Conduct
+```bash
+docker exec -it back-php-tasks bash
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Luego ejecutar:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🌐 Acceso a la API
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+La API estará disponible en el puerto configurado para Nginx. Por defecto:
+
+```
+http://localhost:81
+```
+
+Si cambiaste el puerto en el `docker-compose.yml`, usa el correspondiente.
+
+---
+
+## ✔️ Notas
+
+* Asegúrate de tener Docker y Docker Compose instalados correctamente.
+* Verifica permisos de escritura sobre los directorios `data/` y `logs/`.
+* Puedes acceder a phpMyAdmin si está habilitado en el `docker-compose.yml`.
+
+---
+
+## 📬 Soporte
+
+Para cualquier duda o mejora, puedes extender este README o documentar configuraciones adicionales del entorno.
