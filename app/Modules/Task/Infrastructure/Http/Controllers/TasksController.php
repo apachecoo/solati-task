@@ -18,7 +18,6 @@ class TasksController extends Controller
 
     public function store(Request $taskRequest){
         
-        // dd($taskRequest);
         $dto = new TaskDTO(
             title: $taskRequest->input('title'),
             description: $taskRequest->input('description')

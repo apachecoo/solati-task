@@ -27,10 +27,11 @@ class EloquentTaskRepository implements TaskRepositoryInterface
 
     public function create(TaskDTO $dto): TaskEntity
     {
+        //  dd(TaskStatus::PENDING->value);
         $model = new TaskModel();
         $model->title = $dto->title;
         $model->description = $dto->description;
-        $model->status = TaskStatus::PENDING;
+        $model->status = TaskStatus::PENDING->value;
         $model->save();
         return TaskMapper::entityFromModel($model);
     }
