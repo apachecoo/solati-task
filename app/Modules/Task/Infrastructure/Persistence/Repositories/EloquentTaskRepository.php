@@ -15,9 +15,9 @@ class EloquentTaskRepository implements TaskRepositoryInterface
     public function getAll(array $filter): ?Collection
     {
         $query = TaskModel::query();
-        $query = $filter['query'] ?? null;
+        $search = $filter['search'] ?? null;
 
-        if ($query) {
+        if ($search) {
             $query->where('title', 'like', '%' . $filter['query'] . '%')
                 ->orWhere('description', 'like', '%' . $filter['query'] . '%');
         }
@@ -25,24 +25,54 @@ class EloquentTaskRepository implements TaskRepositoryInterface
         return $query->get();
     }
 
+    public function getById(int $id): ?TaskEntity
+    {
+        $model = TaskModel::find($id);
+        if ($model) {
+            return TaskMapper::entityFromModel($model);
+        }
+        return null;
+    }
+
     public function create(TaskDTO $dto): TaskEntity
     {
         $model = new TaskModel();
         $model->title = $dto->title;
         $model->description = $dto->description;
-        $model->status = TaskStatus::PENDING;
+        $model->status = TaskStatus::PENDING->value;
         $model->save();
         return TaskMapper::entityFromModel($model);
     }
 
     public function update(TaskDTO $dto): TaskEntity
     {
-        $model = TaskModel::find($dto);
-        $model->title = $dto->title;
-        $model->description = $dto->description;
-        $model->status = $dto->status;
-        $model->save();
+        $model = TaskModel::findOrFail($dto->id);
+
+        $fields = [
+            'title'       => $dto->title,
+            'description' => $dto->description,
+            'status'      => $dto->status?->value,
+        ];
+
+        $data = array_filter(
+            $fields,
+            fn($value) => !empty($value)
+        );
+
+        if ($data) {
+            $model->fill($data)->save();
+        }
 
         return TaskMapper::entityFromModel($model);
+    }
+
+    public function delete(int $id): bool
+    {
+        $model = TaskModel::find($id);
+        if (!$model) {
+            return false;
+        }
+
+        return (bool) $model->delete();
     }
 }

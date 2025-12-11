@@ -2,9 +2,8 @@
 
 namespace App\Modules\Task\Infrastructure\Persistence\Models;
 
-use App\Modules\Task\Domain\Enums\TaskStatus as EnumsTaskStatus;
 use Illuminate\Database\Eloquent\Model;
-use App\Task\App\Modules\Task\Domain\Enums\TaskStatus;
+use App\Modules\Task\Domain\Enums\TaskStatus;
 
 class Task extends Model
 {
@@ -18,7 +17,7 @@ class Task extends Model
     ];
 
     protected $casts = [
-        'status'=> EnumsTaskStatus::class
+        'status'=> TaskStatus::class
     ];
 
 }
