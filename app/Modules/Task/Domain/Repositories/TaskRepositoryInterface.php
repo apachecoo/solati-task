@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Collection;
 interface TaskRepositoryInterface
 {
     public function getAll(array $filter): ?Collection;
+    public function getById(int $id): ?TaskEntity;
     public function create(TaskDTO $dto): TaskEntity;
     public function update(TaskDTO $dto): TaskEntity;
+    public function delete(int $id): bool;
 }
